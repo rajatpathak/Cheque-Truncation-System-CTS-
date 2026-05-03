@@ -379,6 +379,96 @@ paths:
               schema:
                 $ref: "#/components/schemas/BcpStatus"
 
+  /positive-pay/registrations:
+    get:
+      operationId: listPositivePayRegistrations
+      tags: [positive-pay]
+      summary: List Positive Pay CPPS registrations
+      parameters:
+        - name: match_status
+          in: query
+          schema:
+            type: string
+            enum: [MATCHED, MISMATCHED, PENDING, NOT_REGISTERED]
+        - name: branch_code
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Positive Pay registrations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PositivePayRegistration"
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                required: [data, total]
+
+  /positive-pay/summary:
+    get:
+      operationId: getPositivePaySummary
+      tags: [positive-pay]
+      summary: Positive Pay daily summary stats
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PositivePaySummary"
+
+  /positive-pay/mismatches:
+    get:
+      operationId: listPositivePayMismatches
+      tags: [positive-pay]
+      summary: Only mismatched registrations (alert feed)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Mismatch alert list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PositivePayRegistration"
+
   /audit/trail:
     get:
       operationId: getAuditTrail
@@ -750,3 +840,65 @@ components:
         timestamp:
           type: string
       required: [id, action, timestamp]
+
+    PositivePayRegistration:
+      type: object
+      properties:
+        id:
+          type: integer
+        account_number:
+          type: string
+        cheque_number:
+          type: string
+        amount:
+          type: number
+        payee_name:
+          type: string
+        issue_date:
+          type: string
+        branch_code:
+          type: string
+        registration_status:
+          type: string
+        match_status:
+          type: string
+        mismatch_fields:
+          type: array
+          items:
+            type: string
+        presented_amount:
+          type: number
+        presented_payee:
+          type: string
+        presented_date:
+          type: string
+        cpps_reference:
+          type: string
+        registered_at:
+          type: string
+        matched_at:
+          type: string
+      required: [id, account_number, cheque_number, amount, registration_status]
+
+    PositivePaySummary:
+      type: object
+      properties:
+        date:
+          type: string
+        total_registered:
+          type: integer
+        matched:
+          type: integer
+        mismatched:
+          type: integer
+        pending_match:
+          type: integer
+        not_registered:
+          type: integer
+        high_value_registered:
+          type: integer
+        amount_registered:
+          type: number
+        amount_mismatched:
+          type: number
+      required: [total_registered]

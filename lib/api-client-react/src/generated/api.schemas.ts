@@ -180,6 +180,37 @@ export interface AuditEntry {
   timestamp: string;
 }
 
+export interface PositivePayRegistration {
+  id: number;
+  account_number: string;
+  cheque_number: string;
+  amount: number;
+  payee_name?: string;
+  issue_date?: string;
+  branch_code?: string;
+  registration_status: string;
+  match_status?: string;
+  mismatch_fields?: string[];
+  presented_amount?: number;
+  presented_payee?: string;
+  presented_date?: string;
+  cpps_reference?: string;
+  registered_at?: string;
+  matched_at?: string;
+}
+
+export interface PositivePaySummary {
+  date?: string;
+  total_registered: number;
+  matched?: number;
+  mismatched?: number;
+  pending_match?: number;
+  not_registered?: number;
+  high_value_registered?: number;
+  amount_registered?: number;
+  amount_mismatched?: number;
+}
+
 export type GetDashboardSummaryParams = {
   date?: string;
 };
@@ -255,6 +286,39 @@ export type ListReturnsParams = {
 export type GetReturnsByReasonParams = {
   from_date?: string;
   to_date?: string;
+};
+
+export type ListPositivePayRegistrationsParams = {
+  match_status?: ListPositivePayRegistrationsMatchStatus;
+  branch_code?: string;
+  date?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type ListPositivePayRegistrationsMatchStatus =
+  (typeof ListPositivePayRegistrationsMatchStatus)[keyof typeof ListPositivePayRegistrationsMatchStatus];
+
+export const ListPositivePayRegistrationsMatchStatus = {
+  MATCHED: "MATCHED",
+  MISMATCHED: "MISMATCHED",
+  PENDING: "PENDING",
+  NOT_REGISTERED: "NOT_REGISTERED",
+} as const;
+
+export type ListPositivePayRegistrations200 = {
+  data: PositivePayRegistration[];
+  total: number;
+  page?: number;
+  limit?: number;
+};
+
+export type GetPositivePaySummaryParams = {
+  date?: string;
+};
+
+export type ListPositivePayMismatchesParams = {
+  limit?: number;
 };
 
 export type GetAuditTrailParams = {

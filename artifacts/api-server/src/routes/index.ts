@@ -7,6 +7,7 @@ import sessionsRouter from "./sessions";
 import fraudRouter from "./fraud";
 import returnsRouter from "./returns";
 import bcpRouter from "./bcp";
+import positivePayRouter from "./positive-pay";
 import auditRouter from "./audit";
 
 const router: IRouter = Router();
@@ -19,6 +20,7 @@ router.use(sessionsRouter);
 router.use(fraudRouter);
 router.use(returnsRouter);
 router.use(bcpRouter);
+router.use(positivePayRouter);
 router.use(auditRouter);
 
 export default router;

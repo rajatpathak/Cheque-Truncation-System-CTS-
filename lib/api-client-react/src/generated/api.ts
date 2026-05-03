@@ -26,6 +26,7 @@ import type {
   GetFraudSummaryParams,
   GetGridSummaryParams,
   GetPipelineStatusParams,
+  GetPositivePaySummaryParams,
   GetRecentInstrumentsParams,
   GetReturnsByReasonParams,
   GridSummary,
@@ -35,9 +36,14 @@ import type {
   ListBatchesParams,
   ListFraudAlertsParams,
   ListInstrumentsParams,
+  ListPositivePayMismatchesParams,
+  ListPositivePayRegistrations200,
+  ListPositivePayRegistrationsParams,
   ListReturnsParams,
   ListSessionsParams,
   PipelineStage,
+  PositivePayRegistration,
+  PositivePaySummary,
   ReturnByReason,
   ReturnInstrument,
   ThroughputPoint,
@@ -1408,6 +1414,321 @@ export function useGetBcpStatus<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetBcpStatusQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List Positive Pay CPPS registrations
+ */
+export const getListPositivePayRegistrationsUrl = (
+  params?: ListPositivePayRegistrationsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/positive-pay/registrations?${stringifiedParams}`
+    : `/api/positive-pay/registrations`;
+};
+
+export const listPositivePayRegistrations = async (
+  params?: ListPositivePayRegistrationsParams,
+  options?: RequestInit,
+): Promise<ListPositivePayRegistrations200> => {
+  return customFetch<ListPositivePayRegistrations200>(
+    getListPositivePayRegistrationsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListPositivePayRegistrationsQueryKey = (
+  params?: ListPositivePayRegistrationsParams,
+) => {
+  return [
+    `/api/positive-pay/registrations`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getListPositivePayRegistrationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPositivePayRegistrations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPositivePayRegistrationsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPositivePayRegistrations>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListPositivePayRegistrationsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPositivePayRegistrations>>
+  > = ({ signal }) =>
+    listPositivePayRegistrations(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPositivePayRegistrations>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPositivePayRegistrationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPositivePayRegistrations>>
+>;
+export type ListPositivePayRegistrationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List Positive Pay CPPS registrations
+ */
+
+export function useListPositivePayRegistrations<
+  TData = Awaited<ReturnType<typeof listPositivePayRegistrations>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPositivePayRegistrationsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPositivePayRegistrations>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPositivePayRegistrationsQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Positive Pay daily summary stats
+ */
+export const getGetPositivePaySummaryUrl = (
+  params?: GetPositivePaySummaryParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/positive-pay/summary?${stringifiedParams}`
+    : `/api/positive-pay/summary`;
+};
+
+export const getPositivePaySummary = async (
+  params?: GetPositivePaySummaryParams,
+  options?: RequestInit,
+): Promise<PositivePaySummary> => {
+  return customFetch<PositivePaySummary>(getGetPositivePaySummaryUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPositivePaySummaryQueryKey = (
+  params?: GetPositivePaySummaryParams,
+) => {
+  return [`/api/positive-pay/summary`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetPositivePaySummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPositivePaySummary>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetPositivePaySummaryParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPositivePaySummary>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetPositivePaySummaryQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPositivePaySummary>>
+  > = ({ signal }) =>
+    getPositivePaySummary(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPositivePaySummary>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPositivePaySummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPositivePaySummary>>
+>;
+export type GetPositivePaySummaryQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Positive Pay daily summary stats
+ */
+
+export function useGetPositivePaySummary<
+  TData = Awaited<ReturnType<typeof getPositivePaySummary>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetPositivePaySummaryParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPositivePaySummary>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPositivePaySummaryQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Only mismatched registrations (alert feed)
+ */
+export const getListPositivePayMismatchesUrl = (
+  params?: ListPositivePayMismatchesParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/positive-pay/mismatches?${stringifiedParams}`
+    : `/api/positive-pay/mismatches`;
+};
+
+export const listPositivePayMismatches = async (
+  params?: ListPositivePayMismatchesParams,
+  options?: RequestInit,
+): Promise<PositivePayRegistration[]> => {
+  return customFetch<PositivePayRegistration[]>(
+    getListPositivePayMismatchesUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListPositivePayMismatchesQueryKey = (
+  params?: ListPositivePayMismatchesParams,
+) => {
+  return [`/api/positive-pay/mismatches`, ...(params ? [params] : [])] as const;
+};
+
+export const getListPositivePayMismatchesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPositivePayMismatches>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPositivePayMismatchesParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPositivePayMismatches>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListPositivePayMismatchesQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPositivePayMismatches>>
+  > = ({ signal }) =>
+    listPositivePayMismatches(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPositivePayMismatches>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPositivePayMismatchesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPositivePayMismatches>>
+>;
+export type ListPositivePayMismatchesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Only mismatched registrations (alert feed)
+ */
+
+export function useListPositivePayMismatches<
+  TData = Awaited<ReturnType<typeof listPositivePayMismatches>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPositivePayMismatchesParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPositivePayMismatches>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPositivePayMismatchesQueryOptions(
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

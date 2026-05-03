@@ -14,6 +14,7 @@ import {
   ClipboardList,
   Activity,
   ChevronRight,
+  BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Dashboard from "@/pages/dashboard";
@@ -24,6 +25,7 @@ import Fraud from "@/pages/fraud";
 import Returns from "@/pages/returns";
 import BCP from "@/pages/bcp";
 import Audit from "@/pages/audit";
+import PositivePay from "@/pages/positive-pay";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -38,6 +40,7 @@ const NAV = [
   { path: "/fraud", label: "Fraud Alerts", icon: ShieldAlert },
   { path: "/returns", label: "Returns", icon: RotateCcw },
   { path: "/bcp", label: "BCP / DR Status", icon: Server },
+  { path: "/positive-pay", label: "Positive Pay", icon: BadgeCheck },
   { path: "/audit", label: "Audit Trail", icon: ClipboardList },
 ];
 
@@ -121,6 +124,7 @@ function Layout() {
           <Route path="/fraud" component={Fraud} />
           <Route path="/returns" component={Returns} />
           <Route path="/bcp" component={BCP} />
+          <Route path="/positive-pay" component={PositivePay} />
           <Route path="/audit" component={Audit} />
           <Route component={NotFound} />
         </Switch>

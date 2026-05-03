@@ -346,6 +346,104 @@ export const GetBcpStatusResponse = zod.object({
 });
 
 /**
+ * @summary List Positive Pay CPPS registrations
+ */
+export const listPositivePayRegistrationsQueryPageDefault = 1;
+export const listPositivePayRegistrationsQueryLimitDefault = 50;
+
+export const ListPositivePayRegistrationsQueryParams = zod.object({
+  match_status: zod
+    .enum(["MATCHED", "MISMATCHED", "PENDING", "NOT_REGISTERED"])
+    .optional(),
+  branch_code: zod.coerce.string().optional(),
+  date: zod.date().optional(),
+  page: zod.coerce
+    .number()
+    .default(listPositivePayRegistrationsQueryPageDefault),
+  limit: zod.coerce
+    .number()
+    .default(listPositivePayRegistrationsQueryLimitDefault),
+});
+
+export const ListPositivePayRegistrationsResponse = zod.object({
+  data: zod.array(
+    zod.object({
+      id: zod.number(),
+      account_number: zod.string(),
+      cheque_number: zod.string(),
+      amount: zod.number(),
+      payee_name: zod.string().optional(),
+      issue_date: zod.string().optional(),
+      branch_code: zod.string().optional(),
+      registration_status: zod.string(),
+      match_status: zod.string().optional(),
+      mismatch_fields: zod.array(zod.string()).optional(),
+      presented_amount: zod.number().optional(),
+      presented_payee: zod.string().optional(),
+      presented_date: zod.string().optional(),
+      cpps_reference: zod.string().optional(),
+      registered_at: zod.string().optional(),
+      matched_at: zod.string().optional(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number().optional(),
+  limit: zod.number().optional(),
+});
+
+/**
+ * @summary Positive Pay daily summary stats
+ */
+export const GetPositivePaySummaryQueryParams = zod.object({
+  date: zod.date().optional(),
+});
+
+export const GetPositivePaySummaryResponse = zod.object({
+  date: zod.string().optional(),
+  total_registered: zod.number(),
+  matched: zod.number().optional(),
+  mismatched: zod.number().optional(),
+  pending_match: zod.number().optional(),
+  not_registered: zod.number().optional(),
+  high_value_registered: zod.number().optional(),
+  amount_registered: zod.number().optional(),
+  amount_mismatched: zod.number().optional(),
+});
+
+/**
+ * @summary Only mismatched registrations (alert feed)
+ */
+export const listPositivePayMismatchesQueryLimitDefault = 20;
+
+export const ListPositivePayMismatchesQueryParams = zod.object({
+  limit: zod.coerce
+    .number()
+    .default(listPositivePayMismatchesQueryLimitDefault),
+});
+
+export const ListPositivePayMismatchesResponseItem = zod.object({
+  id: zod.number(),
+  account_number: zod.string(),
+  cheque_number: zod.string(),
+  amount: zod.number(),
+  payee_name: zod.string().optional(),
+  issue_date: zod.string().optional(),
+  branch_code: zod.string().optional(),
+  registration_status: zod.string(),
+  match_status: zod.string().optional(),
+  mismatch_fields: zod.array(zod.string()).optional(),
+  presented_amount: zod.number().optional(),
+  presented_payee: zod.string().optional(),
+  presented_date: zod.string().optional(),
+  cpps_reference: zod.string().optional(),
+  registered_at: zod.string().optional(),
+  matched_at: zod.string().optional(),
+});
+export const ListPositivePayMismatchesResponse = zod.array(
+  ListPositivePayMismatchesResponseItem,
+);
+
+/**
  * @summary Audit trail with filters
  */
 export const getAuditTrailQueryLimitDefault = 50;
