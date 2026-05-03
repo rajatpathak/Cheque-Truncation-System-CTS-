@@ -3,20 +3,36 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: IOB CTS National Grid - Operations Dashboard API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: CTS Operations Dashboard
+  - name: instruments
+    description: Cheque instruments
+  - name: batches
+    description: Clearing batches
+  - name: sessions
+    description: Clearing sessions
+  - name: fraud
+    description: Fraud detection and alerts
+  - name: returns
+    description: Return instruments
+  - name: bcp
+    description: BCP / DR status
+  - name: audit
+    description: Audit trail
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +40,378 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Real-time ops dashboard summary
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/pipeline:
+    get:
+      operationId: getPipelineStatus
+      tags: [dashboard]
+      summary: Instrument pipeline stages
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Pipeline status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PipelineStage"
+
+  /dashboard/throughput:
+    get:
+      operationId: getThroughput
+      tags: [dashboard]
+      summary: Hourly throughput for today
+      responses:
+        "200":
+          description: Hourly throughput data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThroughputPoint"
+
+  /dashboard/grid-summary:
+    get:
+      operationId: getGridSummary
+      tags: [dashboard]
+      summary: Summary by NPCI grid code
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Grid summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GridSummary"
+
+  /instruments:
+    get:
+      operationId: listInstruments
+      tags: [instruments]
+      summary: List instruments with filters
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: iqa_status
+          in: query
+          schema:
+            type: string
+        - name: fraud_status
+          in: query
+          schema:
+            type: string
+        - name: branch_code
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Paginated instrument list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstrumentListResponse"
+
+  /instruments/{id}:
+    get:
+      operationId: getInstrument
+      tags: [instruments]
+      summary: Get instrument details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Instrument details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instrument"
+
+  /instruments/recent:
+    get:
+      operationId: getRecentInstruments
+      tags: [instruments]
+      summary: Most recent instruments (live feed)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Recent instruments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Instrument"
+
+  /batches:
+    get:
+      operationId: listBatches
+      tags: [batches]
+      summary: List clearing batches
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: branch_code
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Batch list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Batch"
+
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List clearing sessions
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClearingSession"
+
+  /fraud/alerts:
+    get:
+      operationId: listFraudAlerts
+      tags: [fraud]
+      summary: List fraud alerts
+      parameters:
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [HIGH, MEDIUM, LOW]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [OPEN, RESOLVED, ESCALATED]
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Fraud alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FraudAlert"
+
+  /fraud/summary:
+    get:
+      operationId: getFraudSummary
+      tags: [fraud]
+      summary: Fraud detection summary stats
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Fraud summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FraudSummary"
+
+  /returns:
+    get:
+      operationId: listReturns
+      tags: [returns]
+      summary: List return instruments
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Return instruments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReturnInstrument"
+
+  /returns/by-reason:
+    get:
+      operationId: getReturnsByReason
+      tags: [returns]
+      summary: Returns aggregated by reason code
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Returns by reason
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReturnByReason"
+
+  /bcp/status:
+    get:
+      operationId: getBcpStatus
+      tags: [bcp]
+      summary: BCP / DR system health and replication status
+      responses:
+        "200":
+          description: BCP status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BcpStatus"
+
+  /audit/trail:
+    get:
+      operationId: getAuditTrail
+      tags: [audit]
+      summary: Audit trail with filters
+      parameters:
+        - name: module
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Audit trail entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditEntry"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +419,334 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+        node:
+          type: string
+        timestamp:
+          type: string
+      required: [status]
 
+    DashboardSummary:
+      type: object
+      properties:
+        date:
+          type: string
+        total_instruments:
+          type: integer
+        total_amount:
+          type: number
+        iqa_pass:
+          type: integer
+        iqa_fail:
+          type: integer
+        iqa_pass_pct:
+          type: number
+        fraud_clear:
+          type: integer
+        fraud_flagged:
+          type: integer
+        fraud_blocked:
+          type: integer
+        submitted:
+          type: integer
+        pending:
+          type: integer
+        returns_today:
+          type: integer
+        high_value_count:
+          type: integer
+        active_sessions:
+          type: integer
+        active_batches:
+          type: integer
+        uptime_pct:
+          type: number
+        active_node:
+          type: string
+      required: [date, total_instruments, total_amount]
+
+    PipelineStage:
+      type: object
+      properties:
+        stage:
+          type: string
+        count:
+          type: integer
+        amount:
+          type: number
+        pct:
+          type: number
+      required: [stage, count]
+
+    ThroughputPoint:
+      type: object
+      properties:
+        hour:
+          type: string
+        count:
+          type: integer
+        amount:
+          type: number
+      required: [hour, count]
+
+    GridSummary:
+      type: object
+      properties:
+        grid_code:
+          type: string
+        total:
+          type: integer
+        amount:
+          type: number
+        submitted:
+          type: integer
+        fraud_flagged:
+          type: integer
+      required: [grid_code, total]
+
+    Instrument:
+      type: object
+      properties:
+        id:
+          type: integer
+        instrument_id:
+          type: string
+        cheque_number:
+          type: string
+        micr_code:
+          type: string
+        bank_sort_code:
+          type: string
+        account_number:
+          type: string
+        payee_name:
+          type: string
+        amount_figures:
+          type: number
+        instrument_date:
+          type: string
+        branch_code:
+          type: string
+        grid_code:
+          type: string
+        status:
+          type: string
+        iqa_status:
+          type: string
+        fraud_status:
+          type: string
+        signature_status:
+          type: string
+        is_high_value:
+          type: boolean
+        cts2010_compliant:
+          type: boolean
+        clearing_type:
+          type: string
+        created_at:
+          type: string
+      required: [id, instrument_id, status]
+
+    InstrumentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Instrument"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [data, total]
+
+    Batch:
+      type: object
+      properties:
+        id:
+          type: integer
+        batch_number:
+          type: string
+        batch_type:
+          type: string
+        branch_code:
+          type: string
+        status:
+          type: string
+        total_instruments:
+          type: integer
+        total_amount:
+          type: number
+        iqa_pass_count:
+          type: integer
+        iqa_fail_count:
+          type: integer
+        signed:
+          type: boolean
+        submitted_to_chi:
+          type: boolean
+        created_at:
+          type: string
+      required: [id, batch_number, status]
+
+    ClearingSession:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_number:
+          type: string
+        session_date:
+          type: string
+        session_type:
+          type: string
+        clearing_type:
+          type: string
+        grid_code:
+          type: string
+        status:
+          type: string
+        total_instruments:
+          type: integer
+        total_outward_amount:
+          type: number
+        total_inward_amount:
+          type: number
+        submitted_at:
+          type: string
+      required: [id, session_number, status]
+
+    FraudAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+        instrument_id:
+          type: integer
+        alert_type:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        auto_blocked:
+          type: boolean
+        tamper_detected:
+          type: boolean
+        photocopy_detected:
+          type: boolean
+        duplicate_of:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+      required: [id, alert_type, severity, status]
+
+    FraudSummary:
+      type: object
+      properties:
+        date:
+          type: string
+        total_alerts:
+          type: integer
+        high_severity:
+          type: integer
+        medium_severity:
+          type: integer
+        auto_blocked:
+          type: integer
+        open_alerts:
+          type: integer
+        resolved_today:
+          type: integer
+        cts2010_violations:
+          type: integer
+        duplicate_count:
+          type: integer
+        blacklisted_hits:
+          type: integer
+      required: [total_alerts]
+
+    ReturnInstrument:
+      type: object
+      properties:
+        id:
+          type: integer
+        instrument_id:
+          type: string
+        return_type:
+          type: string
+        return_reason_code:
+          type: string
+        return_reason_description:
+          type: string
+        return_date:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+        branch_code:
+          type: string
+        representment_count:
+          type: integer
+      required: [id, return_type, status]
+
+    ReturnByReason:
+      type: object
+      properties:
+        reason_code:
+          type: string
+        description:
+          type: string
+        count:
+          type: integer
+        total_amount:
+          type: number
+      required: [reason_code, count]
+
+    BcpStatus:
+      type: object
+      properties:
+        active_node:
+          type: string
+        dc_status:
+          type: string
+        dr_status:
+          type: string
+        replication_lag_minutes:
+          type: number
+        rpo_status:
+          type: string
+        uptime_pct:
+          type: number
+        rto_target_min:
+          type: integer
+        rpo_target_min:
+          type: integer
+        last_checked:
+          type: string
+      required: [active_node, dc_status, dr_status]
+
+    AuditEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_name:
+          type: string
+        branch_code:
+          type: string
+        action:
+          type: string
+        module:
+          type: string
+        reference_id:
+          type: string
+        ip_address:
+          type: string
+        timestamp:
+          type: string
+      required: [id, action, timestamp]
