@@ -1,0 +1,34 @@
+<?php
+
+return [
+    'default' => env('QUEUE_CONNECTION', 'redis'),
+
+    'connections' => [
+        'redis' => [
+            'driver'     => 'redis',
+            'connection' => 'default',
+            'queue'      => env('REDIS_QUEUE', 'default'),
+            'retry_after'=> 90,
+            'block_for'  => null,
+            'after_commit'=> false,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CTS Queue Configuration
+    | Separate queues for different priorities
+    |--------------------------------------------------------------------------
+    */
+    'cts_queues' => [
+        'high'    => 'cts-high',        // Fraud detection, Signatures
+        'default' => 'cts-default',     // OCR, Data Entry
+        'low'     => 'cts-low',         // Reports, Archive
+    ],
+
+    'failed' => [
+        'driver'   => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
+        'database' => env('DB_CONNECTION', 'oracle'),
+        'table'    => 'failed_jobs',
+    ],
+];
