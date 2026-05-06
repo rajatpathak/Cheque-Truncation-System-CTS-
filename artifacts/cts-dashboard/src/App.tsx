@@ -16,6 +16,7 @@ import {
   ChevronRight,
   BadgeCheck,
   ScanLine,
+  Network,
   LogOut,
   User,
   Shield,
@@ -36,6 +37,7 @@ import BCP from "@/pages/bcp";
 import Audit from "@/pages/audit";
 import PositivePay from "@/pages/positive-pay";
 import IQA from "@/pages/iqa";
+import Nodal from "@/pages/nodal";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -52,6 +54,7 @@ const NAV = [
   { path: "/bcp", label: "BCP / DR Status", icon: Server },
   { path: "/positive-pay", label: "Positive Pay", icon: BadgeCheck },
   { path: "/iqa", label: "Image Quality (IQA)", icon: ScanLine },
+  { path: "/nodal", label: "Nodal Hub Ops", icon: Network },
   { path: "/audit", label: "Audit Trail", icon: ClipboardList },
 ];
 
@@ -220,6 +223,7 @@ function Layout() {
           <Route path="/bcp" component={BCP} />
           <Route path="/positive-pay" component={PositivePay} />
           <Route path="/iqa" component={IQA} />
+          <Route path="/nodal" component={Nodal} />
           <Route path="/audit" component={Audit} />
           <Route component={NotFound} />
         </Switch>

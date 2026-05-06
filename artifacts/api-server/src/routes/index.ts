@@ -10,6 +10,7 @@ import returnsRouter from "./returns";
 import bcpRouter from "./bcp";
 import positivePayRouter from "./positive-pay";
 import iqaRouter from "./iqa";
+import nodalRouter from "./nodal";
 import auditRouter from "./audit";
 
 const router: IRouter = Router();
@@ -25,6 +26,7 @@ router.use(returnsRouter);
 router.use(bcpRouter);
 router.use(positivePayRouter);
 router.use(iqaRouter);
+router.use(nodalRouter);
 router.use(auditRouter);
 
 export default router;

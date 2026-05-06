@@ -53,7 +53,13 @@ async function apiFetch(path: string, options?: RequestInit) {
       ...(options?.headers ?? {}),
     },
   });
-  const data = await res.json();
+  let data: unknown = {};
+  try {
+    const text = await res.text();
+    if (text) data = JSON.parse(text);
+  } catch {
+    data = {};
+  }
   return { ok: res.ok, status: res.status, data };
 }
 
