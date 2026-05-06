@@ -10,33 +10,31 @@ import {
   ResponsiveContainer, Cell,
 } from "recharts";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 function useGrids() {
   return useQuery({
     queryKey: ["nodal", "grids"],
-    queryFn: () => fetch(`${BASE}/api/nodal/grids`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/nodal/grids`).then((r) => r.json()),
     refetchInterval: 15000,
   });
 }
 function useHubs() {
   return useQuery({
     queryKey: ["nodal", "hubs"],
-    queryFn: () => fetch(`${BASE}/api/nodal/hubs`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/nodal/hubs`).then((r) => r.json()),
     refetchInterval: 15000,
   });
 }
 function useFlows() {
   return useQuery({
     queryKey: ["nodal", "flows"],
-    queryFn: () => fetch(`${BASE}/api/nodal/inter-grid-flows`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/nodal/inter-grid-flows`).then((r) => r.json()),
     refetchInterval: 30000,
   });
 }
 function useNpci() {
   return useQuery({
     queryKey: ["nodal", "npci"],
-    queryFn: () => fetch(`${BASE}/api/nodal/npci-connectivity`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/nodal/npci-connectivity`).then((r) => r.json()),
     refetchInterval: 30000,
   });
 }

@@ -10,12 +10,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie, Legend,
 } from "recharts";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 function useIqaSummary() {
   return useQuery({
     queryKey: ["iqa", "summary"],
-    queryFn: () => fetch(`${BASE}/api/iqa/summary`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/iqa/summary`).then((r) => r.json()),
     refetchInterval: 60000,
   });
 }
@@ -23,7 +21,7 @@ function useIqaSummary() {
 function useIqaBranches() {
   return useQuery({
     queryKey: ["iqa", "branches"],
-    queryFn: () => fetch(`${BASE}/api/iqa/branches`).then((r) => r.json()),
+    queryFn: () => fetch(`/api/iqa/branches`).then((r) => r.json()),
   });
 }
 
@@ -34,7 +32,7 @@ function useIqaFailed(page: number, branch?: string, reason?: string) {
       const params = new URLSearchParams({ page: String(page), limit: "15" });
       if (branch) params.set("branch", branch);
       if (reason) params.set("reason", reason);
-      return fetch(`${BASE}/api/iqa/failed-instruments?${params}`).then((r) => r.json());
+      return fetch(`/api/iqa/failed-instruments?${params}`).then((r) => r.json());
     },
   });
 }

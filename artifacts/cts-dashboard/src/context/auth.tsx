@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 export interface AuthUser {
   emp_id: string;
   name: string;
@@ -46,7 +44,7 @@ const IDLE_TIMEOUT_S = 30 * 60;
 const WARN_AT_S = 5 * 60;
 
 async function apiFetch(path: string, options?: RequestInit) {
-  const res = await fetch(`${BASE}/api${path}`, {
+  const res = await fetch(`/api${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
