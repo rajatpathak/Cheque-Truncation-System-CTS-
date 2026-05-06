@@ -35,7 +35,7 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 - **`artifacts/mockup-sandbox`** — Component preview server for canvas mockups
 - **`cts-laravel/`** — PHP Laravel 11 scaffold (82 files, 11 modules, 80+ API routes)
 
-### Dashboard Modules (10 pages, all wired to live mock API)
+### Dashboard Modules (12 pages, all wired to live mock API)
 
 1. **Operations Overview** — real-time KPIs, pipeline chart, throughput, grid node summary
 2. **Instruments** — MICR cheque listing with IFSC, drawee bank, status badges
@@ -46,7 +46,9 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 7. **BCP / DR Status** — DC Chennai / DR Hyderabad health, RPO/RTO gauges
 8. **Positive Pay** — NPCI CPPS registrations, mismatch alerts, high-value (≥₹5L) tracking
 9. **Image Quality Analysis (IQA)** — pass/fail rates by branch, failure reason breakdown, re-scan queue
-10. **Audit Trail** — full access log with user, module, action, IP
+10. **Nodal Hub Ops** — 5 CTS grid nodes, NPCI connectivity, inter-grid settlement flows
+11. **Cheque Scanner** (`/scanner`) — upload real/fake cheque image, animated IQA scan, 10-point quality checks, fraud flag report, side-by-side demo comparison table
+12. **Audit Trail** — full access log with user, module, action, IP
 
 ### Authentication System
 

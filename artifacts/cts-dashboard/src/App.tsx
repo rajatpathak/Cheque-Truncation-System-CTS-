@@ -21,6 +21,7 @@ import {
   User,
   Shield,
   ChevronDown,
+  Microscope,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -38,6 +39,7 @@ import Audit from "@/pages/audit";
 import PositivePay from "@/pages/positive-pay";
 import IQA from "@/pages/iqa";
 import Nodal from "@/pages/nodal";
+import Scanner from "@/pages/scanner";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -55,6 +57,7 @@ const NAV = [
   { path: "/positive-pay", label: "Positive Pay", icon: BadgeCheck },
   { path: "/iqa", label: "Image Quality (IQA)", icon: ScanLine },
   { path: "/nodal", label: "Nodal Hub Ops", icon: Network },
+  { path: "/scanner", label: "Cheque Scanner", icon: Microscope },
   { path: "/audit", label: "Audit Trail", icon: ClipboardList },
 ];
 
@@ -224,6 +227,7 @@ function Layout() {
           <Route path="/positive-pay" component={PositivePay} />
           <Route path="/iqa" component={IQA} />
           <Route path="/nodal" component={Nodal} />
+          <Route path="/scanner" component={Scanner} />
           <Route path="/audit" component={Audit} />
           <Route component={NotFound} />
         </Switch>
